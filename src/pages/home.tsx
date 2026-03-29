@@ -20,11 +20,35 @@ export default function HomePage() {
   return (
     <div className="animate-in fade-in duration-700 text-right" dir="rtl">
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-emerald-900 to-emerald-800 rounded-3xl p-8 md:p-12 mb-12 text-white">
-        <h1 className="text-3xl md:text-5xl font-black mb-4">مرحباً بكم في MAGHREB24</h1>
-        <p className="text-emerald-100 text-lg md:text-xl max-w-2xl">
-          بوابتكم لأخبار المغرب والعالم العربي. تغطية شاملة، تحليلات معمقة، وآراء متنوعة.
-        </p>
+      <div className="bg-gradient-to-br from-emerald-900 to-emerald-800 rounded-3xl p-8 md:p-12 mb-12 text-white relative overflow-hidden">
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            <h1 className="text-3xl md:text-5xl font-black mb-4">مرحباً بكم في MAGHREB24</h1>
+            <p className="text-emerald-100 text-lg md:text-xl max-w-2xl">
+              بوابتكم لأخبار المغرب والعالم العربي. تغطية شاملة، تحليلات معمقة، وآراء متنوعة.
+            </p>
+          </div>
+          <div className="hidden md:block flex-shrink-0 mr-8">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-40 h-40" style={{animation: "glow 2s ease-in-out infinite alternate"}}>
+              <defs>
+                <style>{`
+                  @keyframes glow {
+                    from { filter: drop-shadow(0 0 10px #ff0000) drop-shadow(0 0 20px #ff4500); transform: scale(1); }
+                    to { filter: drop-shadow(0 0 20px #ff0000) drop-shadow(0 0 40px #ff8c00); transform: scale(1.05); }
+                  }
+                `}</style>
+              </defs>
+              <polygon
+                points="100,10 123,79 196,79 137,122 159,190 100,148 41,190 63,122 4,79 77,79"
+                fill="none"
+                stroke="#e60000"
+                strokeWidth="8"
+                strokeLinejoin="round"
+                style={{filter: "drop-shadow(0 0 10px #ff0000) drop-shadow(0 0 20px #ff4500)", animation: "glow 2s ease-in-out infinite alternate"}}
+              />
+            </svg>
+          </div>
+        </div>
       </div>
 
       <AdBanner position="header_home" className="mb-6" />
@@ -70,4 +94,5 @@ export default function HomePage() {
       <AdBanner position="footer" className="mt-8" />
   );
 }
+
 
