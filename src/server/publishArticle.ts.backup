@@ -1,0 +1,120 @@
+import { supabase } from '../lib/supabase';
+
+const PUBLISH_KEY = "pK_9w$1tYvQ2!mN7rTz4#sP5";
+
+export async function publishArticle(articleData: any) {
+  try {
+    const { data, error } = await supabase
+      .from('articles')
+      .insert([{ 
+        ...articleData, 
+        status: 'published',
+        created_at: new Date().toISOString(),
+        published_at: new Date().toISOString()
+      }])
+      .select()
+      .overrideHeaders({
+        'x-publish-key': PUBLISH_KEY
+      });
+
+    if (error) {
+      console.error('??? ?? ?????:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, data: data[0] };
+  } catch (error) {
+    console.error('??????? ?? ?????:', error);
+    return { success: false, error: String(error) };
+  }
+}
+
+// ???? ???? ?????? ???? ?????
+export async function publishSubmissionAsArticle(submission: any, editorNote?: string) {
+  try {
+    // ????? ???? ????????
+    const { error: updateError } = await supabase
+      .from('submissions')
+      .update({ 
+        status: 'approved', 
+        editor_note: editorNote,
+        approved_at: new Date().toISOString()
+      })
+      .eq('id', submission.id)
+      .overrideHeaders({
+        'x-publish-key': PUBLISH_KEY
+      });
+
+    if (updateError) throw updateError;
+
+    // ????? ???? ?? ????????
+    const articleData = {
+      title: submission.title,
+      body: submission.body,
+      excerpt: submission.excerpt || submission.body.slice(0, 200),
+      section: submission.section || 'opinion',
+      author_slug: submission.author_slug || 'guest',
+      author_name: submission.authorName || '????',
+      status: 'published',
+      image_url: submission.authorPhotoUrl || null,
+      source: 'reader_submission',
+      original_submission_id: submission.id,
+    };
+
+    const result = await publishArticle(articleData);
+    return result;
+  } catch (error) {
+    console.error('??? ?? ??? ????????:', error);
+    return { success: false, error: String(error) };
+  }
+}
+
+// ???? ?????? ????
+export async function updateArticle(id: string, updates: any) {
+  try {
+    const { data, error } = await supabase
+      .from('articles')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .overrideHeaders({
+        'x-publish-key': PUBLISH_KEY
+      });
+
+    if (error) {
+      console.error('??? ?? ???????:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, data: data[0] };
+  } catch (error) {
+    console.error('??????? ?? ???????:', error);
+    return { success: false, error: String(error) };
+  }
+}
+
+// ???? ???? ????
+export async function deleteArticle(id: string) {
+  try {
+    const { error } = await supabase
+      .from('articles')
+      .delete()
+      .eq('id', id)
+      .overrideHeaders({
+        'x-publish-key': PUBLISH_KEY
+      });
+
+    if (error) {
+      console.error('??? ?? ?????:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('??????? ?? ?????:', error);
+    return { success: false, error: String(error) };
+  }
+}
