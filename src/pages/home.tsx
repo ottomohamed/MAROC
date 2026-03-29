@@ -1,5 +1,6 @@
 ﻿import { Link } from "wouter";
 import { ArticleCard } from "@/components/article-card";
+import { AdBanner } from "@/components/ad-banner";
 import { useListMAGHREB24Articles } from "@/hooks/use-articles";
 import { Loader2, TrendingUp, Newspaper, Users } from "lucide-react";
 
@@ -26,6 +27,7 @@ export default function HomePage() {
         </p>
       </div>
 
+      <AdBanner position="header_home" className="mb-6" />
       {/* Latest Articles */}
       <div className="mb-12">
         <div className="flex items-center gap-3 mb-8">
@@ -65,5 +67,7 @@ export default function HomePage() {
         </div>
       </div>
     </div>
+      <AdBanner position="footer" className="mt-8" />
   );
 }
+
