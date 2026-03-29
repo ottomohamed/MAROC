@@ -330,6 +330,7 @@ function ArticleEditorModal({ article, onClose, onSave, darkMode }: any) {
   const [scheduleDate, setScheduleDate] = useState(article?.scheduled_for || '');
   const [isScheduled, setIsScheduled] = useState(!!article?.scheduled_for);
   const [imageUrl, setImageUrl] = useState(article?.image_url || '');
+  const [section, setSection] = useState(article?.section || 'politics');
   const [uploadingImage, setUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -389,6 +390,7 @@ function ArticleEditorModal({ article, onClose, onSave, darkMode }: any) {
       seo_description: seoDescription || excerpt.slice(0, 160),
       updated_at: new Date().toISOString(),
       image_url: imageUrl || null,
+      section: section,
       ...(isScheduled && scheduleDate ? { scheduled_for: scheduleDate, status: 'scheduled' } : {})
     };
     
@@ -500,6 +502,23 @@ function ArticleEditorModal({ article, onClose, onSave, darkMode }: any) {
                   </div>
                 )}
               </div>
+            </div>
+
+            {/* القسم */}
+            <div>
+              <label className={`block text-sm font-medium mb-2 ${darkMode ? "text-zinc-300" : "text-gray-700"}`}>القسم</label>
+              <select
+                value={section}
+                onChange={e => setSection(e.target.value)}
+                className={`w-full ${darkMode ? "bg-black border-zinc-800 text-zinc-300" : "bg-gray-50 border-gray-200 text-gray-800"} border rounded-lg p-3 focus:outline-none focus:border-emerald-500`}
+              >
+                <option value="politics">السياسة</option>
+                <option value="economics">الاقتصاد</option>
+                <option value="sports">الرياضة</option>
+                <option value="culture">الثقافة</option>
+                <option value="society">المجتمع</option>
+                <option value="science">العلوم والتقنية</option>
+              </select>
             </div>
 
             {/* المحتوى */}
@@ -1527,6 +1546,7 @@ function AnalyticsDashboard({ analytics, darkMode }: { analytics: AnalyticsData;
     </div>
   );
 }
+
 
 
 
