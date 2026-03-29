@@ -2,6 +2,7 @@
 import { useGetMAGHREB24Article } from "@/hooks/use-articles";
 import { Loader2, Calendar, User, ArrowRight, Share2 } from "lucide-react";
 import { AdBanner } from "@/components/ad-banner";
+import { Comments } from "@/components/comments";
 import { formatDate, getTranslatedSection } from "@/lib/utils";
 
 export default function ArticlePage() {
@@ -86,6 +87,9 @@ export default function ArticlePage() {
 
         {/* إعلان أسفل المقال */}
         <AdBanner position="footer" className="my-6" />
+        {/* التعليقات */}
+        <Comments articleId={article.id} />
+
         {/* Share Section */}
         <div className="mt-12 pt-8 border-t border-gray-100 dark:border-slate-800">
           <h3 className="text-lg font-bold mb-4">شارك المقال</h3>
@@ -99,4 +103,5 @@ export default function ArticlePage() {
     </div>
   );
 }
+
 
