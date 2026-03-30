@@ -24,7 +24,14 @@ export function getTranslatedSection(section: string): string {
     'sports': 'رياضة',
     'technology': 'تكنولوجيا',
     'opinion': 'رأي',
-    'editorial': 'افتتاحيات'
+    'editorial': 'افتتاحيات',
+    'diaspora': 'مغاربة العالم',
+    'politics': 'السياسة',
+    'economics': 'الاقتصاد',
+    'sports': 'الرياضة',
+    'culture': 'الثقافة',
+    'society': 'المجتمع',
+    'science': 'العلوم والتقنية'
   };
   return sections[section] || section;
 }
@@ -71,3 +78,4 @@ export function formatDateTime(dateString: string): string {
     minute: '2-digit'
   });
 }
+
