@@ -331,24 +331,8 @@ function ArticleEditorModal({ article, onClose, onSave, darkMode }: any) {
   const [isScheduled, setIsScheduled] = useState(!!article?.scheduled_for);
   const [imageUrl, setImageUrl] = useState(article?.image_url || '');
   const [section, setSection] = useState(article?.section || 'politics');
-  const [authorName, setAuthorName] = useState(article?.author_name || '');
-  const [authorSlug, setAuthorSlug] = useState(article?.author_slug || '');
-  const [dbAuthors, setDbAuthors] = useState<any[]>([]);
   const [uploadingImage, setUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    supabase.from('authors').select('slug, name').order('name').then(({ data }) => {
-      if (data) setDbAuthors(data);
-    });
-  }, []);
-
-  const handleAuthorSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const slug = e.target.value;
-    const author = dbAuthors.find(a => a.slug === slug);
-    if (author) { setAuthorSlug(author.slug); setAuthorName(author.name); }
-    else { setAuthorSlug('editor'); setAuthorName(e.target.value); }
-  };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -412,9 +396,9 @@ function ArticleEditorModal({ article, onClose, onSave, darkMode }: any) {
     
     let error;
     if (article?.id) {
-      try { await articleAction("update", { ...articleData, author_name: authorName || article.author_name, author_slug: authorSlug || article.author_slug }, article.id); } catch(e: any) { error = { message: e.message }; }
+      try { await articleAction("update", articleData, article.id); } catch(e: any) { error = { message: e.message }; }
     } else {
-      try { await articleAction("insert", { ...articleData, author_slug: authorSlug || "editor", author_name: authorName || "رئيس التحرير", status: isScheduled ? "scheduled" : "draft", created_at: new Date().toISOString(), slug: title.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\u0600-\u06FF-]/g, '') + '-' + Date.now() }); } catch(e: any) { error = { message: e.message }; }
+      try { await articleAction("insert", { ...articleData, author_slug: "editor", author_name: "رئيس التحرير", status: isScheduled ? "scheduled" : "draft", created_at: new Date().toISOString() }); } catch(e: any) { error = { message: e.message }; }
     }
     
     if (error) {
@@ -534,31 +518,7 @@ function ArticleEditorModal({ article, onClose, onSave, darkMode }: any) {
                 <option value="culture">الثقافة</option>
                 <option value="society">المجتمع</option>
                 <option value="science">العلوم والتقنية</option>
-                <option value="diaspora">مغاربة العالم</option>
               </select>
-            </div>
-
-            {/* الصحفي */}
-            <div>
-              <label className={`block text-sm font-medium mb-2 ${darkMode ? "text-zinc-300" : "text-gray-700"}`}>الصحفي / الكاتب</label>
-              <div className="flex gap-2">
-                <select
-                  value={authorSlug}
-                  onChange={handleAuthorSelect}
-                  className={`flex-1 ${darkMode ? "bg-black border-zinc-800 text-zinc-300" : "bg-gray-50 border-gray-200 text-gray-800"} border rounded-lg p-3 focus:outline-none focus:border-emerald-500`}
-                >
-                  <option value="">اختر صحفياً...</option>
-                  {dbAuthors.map(a => (
-                    <option key={a.slug} value={a.slug}>{a.name}</option>
-                  ))}
-                </select>
-                <input
-                  value={authorName}
-                  onChange={e => { setAuthorName(e.target.value); setAuthorSlug('custom'); }}
-                  placeholder="أو اكتب الاسم يدوياً"
-                  className={`flex-1 ${darkMode ? "bg-black border-zinc-800 text-zinc-300" : "bg-gray-50 border-gray-200 text-gray-800"} border rounded-lg p-3 text-sm focus:outline-none focus:border-emerald-500`}
-                />
-              </div>
             </div>
 
             {/* المحتوى */}
@@ -1119,17 +1079,10 @@ function NewsroomDashboard({ darkMode }: { darkMode: boolean }) {
           {activeTab === 'analytics' && analytics && (
             <AnalyticsDashboard analytics={analytics} darkMode={darkMode} />
           )}
-          {activeTab === 'settings' && (
-            <SettingsPanel darkMode={darkMode} />
-          )}
-          {activeTab === 'comments' && (
-            <CommentsPanel comments={comments} darkMode={darkMode} onRefresh={loadComments} />
-          )}
-          {(activeTab === 'submissions' || activeTab === 'media') && (
-            <div className={`${darkMode ? 'bg-black border-zinc-800' : 'bg-white border-gray-200'} border rounded-lg p-8 text-center text-zinc-500`}>
-              <p>جاري تطوير {activeTab === 'submissions' ? 'لوحة المساهمات' : 'مكتبة الوسائط'} ...</p>
-            </div>
-          )}
+          {/* باقي التابات بنفس الطريقة */}
+          <div className={`${darkMode ? 'bg-black border-zinc-800' : 'bg-white border-gray-200'} border rounded-lg p-8 text-center text-zinc-500`}>
+            <p>جاري تطوير {activeTab === 'submissions' ? 'لوحة المساهمات' : activeTab === 'comments' ? 'لوحة التعليقات' : activeTab === 'media' ? 'مكتبة الوسائط' : 'الإعدادات'} ...</p>
+          </div>
         </div>
         
         {/* الشريط الجانبي */}
@@ -1589,281 +1542,6 @@ function AnalyticsDashboard({ analytics, darkMode }: { analytics: AnalyticsData;
             ))}
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-// ==================== لوحة التعليقات ====================
-function CommentsPanel({ comments, darkMode, onRefresh }: { comments: any[]; darkMode: boolean; onRefresh: () => void }) {
-  const handleApprove = async (id: string) => {
-    await supabase.from('comments').update({ status: 'approved' }).eq('id', id);
-    toast.success('تم قبول التعليق');
-    onRefresh();
-  };
-  const handleDelete = async (id: string) => {
-    await supabase.from('comments').delete().eq('id', id);
-    toast.success('تم حذف التعليق');
-    onRefresh();
-  };
-  return (
-    <div className={`${darkMode ? 'bg-black border-zinc-800' : 'bg-white border-gray-200'} border rounded-lg overflow-hidden`}>
-      <div className={`p-4 border-b ${darkMode ? 'border-zinc-800' : 'border-gray-200'} flex justify-between items-center`}>
-        <h3 className="text-sm font-bold">التعليقات المعلقة ({comments.length})</h3>
-      </div>
-      <div className="divide-y divide-zinc-800">
-        {comments.length === 0 ? (
-          <p className="p-8 text-center text-zinc-500">لا توجد تعليقات معلقة</p>
-        ) : comments.map((comment: any) => (
-          <div key={comment.id} className="p-4">
-            <div className="flex justify-between items-start mb-2">
-              <div className="flex gap-2">
-                <button onClick={() => handleApprove(comment.id)} className="px-3 py-1 text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-lg hover:bg-emerald-500/20">
-                  <Check className="w-3 h-3 inline ml-1" />قبول
-                </button>
-                <button onClick={() => handleDelete(comment.id)} className="px-3 py-1 text-xs bg-red-500/10 text-red-400 border border-red-500/30 rounded-lg hover:bg-red-500/20">
-                  <Trash2 className="w-3 h-3 inline ml-1" />حذف
-                </button>
-              </div>
-              <div className="text-right">
-                <span className="text-sm font-bold">{comment.author_name}</span>
-                <span className="text-xs text-zinc-500 mr-2">{formatDateTime(comment.created_at)}</span>
-              </div>
-            </div>
-            <p className="text-sm text-zinc-300 text-right">{comment.content}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ==================== لوحة الإعدادات (الإعلانات + الصحفيون) ====================
-function SettingsPanel({ darkMode }: { darkMode: boolean }) {
-  const { ads, addAd, updateAd, deleteAd } = useAds();
-  const [activeSection, setActiveSection] = useState<'ads' | 'journalists'>('ads');
-  const [journalists, setJournalists] = useState<any[]>([]);
-  const [editingAd, setEditingAd] = useState<any>(null);
-  const [editingJournalist, setEditingJournalist] = useState<any>(null);
-  const [showNewAd, setShowNewAd] = useState(false);
-  const [showNewJournalist, setShowNewJournalist] = useState(false);
-
-  // نموذج إعلان جديد
-  const [adTitle, setAdTitle] = useState('');
-  const [adPosition, setAdPosition] = useState<any>('header_home');
-  const [adImage, setAdImage] = useState('');
-  const [adLink, setAdLink] = useState('');
-
-  // نموذج صحفي جديد
-  const [jName, setJName] = useState('');
-  const [jTitle, setJTitle] = useState('');
-  const [jBeat, setJBeat] = useState('');
-  const [jSection, setJSection] = useState('politics');
-
-  const positionNames: Record<string, string> = {
-    header_home: 'أعلى الصفحة الرئيسية',
-    sidebar: 'الشريط الجانبي',
-    footer: 'أسفل الصفحة',
-    in_article: 'داخل المقال',
-  };
-
-  useEffect(() => {
-    loadJournalists();
-  }, []);
-
-  const loadJournalists = async () => {
-    const { data } = await supabase.from('authors').select('*').order('name');
-    if (data) setJournalists(data);
-  };
-
-  const handleSaveAd = () => {
-    if (!adTitle || !adImage) { toast.error('أدخل العنوان والصورة'); return; }
-    if (editingAd) {
-      updateAd(editingAd.id, { title: adTitle, position: adPosition, imageUrl: adImage, linkUrl: adLink });
-      toast.success('تم تحديث الإعلان');
-      setEditingAd(null);
-    } else {
-      addAd({ title: adTitle, position: adPosition, imageUrl: adImage, linkUrl: adLink, active: true });
-      toast.success('تم إضافة الإعلان');
-      setShowNewAd(false);
-    }
-    setAdTitle(''); setAdImage(''); setAdLink('');
-  };
-
-  const handleEditAd = (ad: any) => {
-    setEditingAd(ad);
-    setAdTitle(ad.title); setAdPosition(ad.position);
-    setAdImage(ad.imageUrl); setAdLink(ad.linkUrl);
-    setShowNewAd(true);
-  };
-
-  const handleSaveJournalist = async () => {
-    if (!jName) { toast.error('أدخل اسم الصحفي'); return; }
-    const slug = jName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\u0600-\u06FF-]/g, '') + '-' + Date.now();
-    if (editingJournalist) {
-      await supabase.from('authors').update({ name: jName, title: jTitle, beat: jBeat, section: jSection }).eq('id', editingJournalist.id);
-      toast.success('تم تحديث الصحفي');
-      setEditingJournalist(null);
-    } else {
-      await supabase.from('authors').insert({ slug, name: jName, title: jTitle, beat: jBeat, section: jSection, is_active: true });
-      toast.success('تم إضافة الصحفي');
-      setShowNewJournalist(false);
-    }
-    setJName(''); setJTitle(''); setJBeat('');
-    loadJournalists();
-  };
-
-  const handleEditJournalist = (j: any) => {
-    setEditingJournalist(j);
-    setJName(j.name); setJTitle(j.title || ''); setJBeat(j.beat || ''); setJSection(j.section || 'politics');
-    setShowNewJournalist(true);
-  };
-
-  const handleDeleteJournalist = async (id: string) => {
-    if (!confirm('هل أنت متأكد من حذف هذا الصحفي؟')) return;
-    await supabase.from('authors').delete().eq('id', id);
-    toast.success('تم حذف الصحفي');
-    loadJournalists();
-  };
-
-  return (
-    <div className={`${darkMode ? 'bg-black border-zinc-800' : 'bg-white border-gray-200'} border rounded-lg overflow-hidden`}>
-      {/* التبويبات */}
-      <div className={`flex border-b ${darkMode ? 'border-zinc-800' : 'border-gray-200'}`}>
-        <button onClick={() => setActiveSection('ads')} className={`px-6 py-3 text-sm font-bold flex items-center gap-2 ${activeSection === 'ads' ? 'border-b-2 border-emerald-500 text-emerald-500' : darkMode ? 'text-zinc-500' : 'text-gray-500'}`}>
-          <Megaphone className="w-4 h-4" /> إدارة الإعلانات
-        </button>
-        <button onClick={() => setActiveSection('journalists')} className={`px-6 py-3 text-sm font-bold flex items-center gap-2 ${activeSection === 'journalists' ? 'border-b-2 border-emerald-500 text-emerald-500' : darkMode ? 'text-zinc-500' : 'text-gray-500'}`}>
-          <Users className="w-4 h-4" /> إدارة الصحفيين
-        </button>
-      </div>
-
-      <div className="p-6">
-        {/* ==================== إدارة الإعلانات ==================== */}
-        {activeSection === 'ads' && (
-          <div className="space-y-4">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-sm font-bold">الإعلانات ({ads.length})</h3>
-              <button onClick={() => { setShowNewAd(!showNewAd); setEditingAd(null); setAdTitle(''); setAdImage(''); setAdLink(''); setAdPosition('header_home'); }} className="px-3 py-1.5 text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-lg flex items-center gap-1">
-                <Plus className="w-3 h-3" /> إعلان جديد
-              </button>
-            </div>
-
-            {/* نموذج إضافة/تعديل إعلان */}
-            {showNewAd && (
-              <div className={`p-4 rounded-lg border ${darkMode ? 'bg-zinc-900 border-zinc-700' : 'bg-gray-50 border-gray-200'} space-y-3 mb-4`}>
-                <h4 className="text-sm font-bold">{editingAd ? 'تعديل الإعلان' : 'إعلان جديد'}</h4>
-                <input value={adTitle} onChange={e => setAdTitle(e.target.value)} placeholder="عنوان الإعلان" className={`w-full border rounded-lg p-2 text-sm ${darkMode ? 'bg-black border-zinc-700 text-zinc-300' : 'bg-white border-gray-200'}`} />
-                <select value={adPosition} onChange={e => setAdPosition(e.target.value)} className={`w-full border rounded-lg p-2 text-sm ${darkMode ? 'bg-black border-zinc-700 text-zinc-300' : 'bg-white border-gray-200'}`}>
-                  {Object.entries(positionNames).map(([key, val]) => (
-                    <option key={key} value={key}>{val}</option>
-                  ))}
-                </select>
-                <input value={adImage} onChange={e => setAdImage(e.target.value)} placeholder="رابط صورة الإعلان" className={`w-full border rounded-lg p-2 text-sm ${darkMode ? 'bg-black border-zinc-700 text-zinc-300' : 'bg-white border-gray-200'}`} />
-                <input value={adLink} onChange={e => setAdLink(e.target.value)} placeholder="رابط الإعلان (اختياري)" className={`w-full border rounded-lg p-2 text-sm ${darkMode ? 'bg-black border-zinc-700 text-zinc-300' : 'bg-white border-gray-200'}`} />
-                {adImage && <img src={adImage} alt="" className="w-full h-24 object-cover rounded-lg" onError={e => (e.currentTarget.style.display = 'none')} />}
-                <div className="flex gap-2">
-                  <button onClick={handleSaveAd} className="px-4 py-2 text-xs bg-emerald-600 text-white rounded-lg hover:bg-emerald-700">
-                    <Save className="w-3 h-3 inline ml-1" />{editingAd ? 'تحديث' : 'حفظ'}
-                  </button>
-                  <button onClick={() => { setShowNewAd(false); setEditingAd(null); }} className="px-4 py-2 text-xs bg-zinc-700 text-zinc-300 rounded-lg">إلغاء</button>
-                </div>
-              </div>
-            )}
-
-            {/* قائمة الإعلانات */}
-            {ads.length === 0 ? (
-              <p className="text-center text-zinc-500 py-8">لا توجد إعلانات بعد</p>
-            ) : (
-              <div className="space-y-3">
-                {ads.map(ad => (
-                  <div key={ad.id} className={`flex items-center gap-4 p-3 rounded-lg border ${darkMode ? 'border-zinc-800 bg-zinc-900/50' : 'border-gray-200 bg-gray-50'}`}>
-                    <img src={ad.imageUrl} alt="" className="w-20 h-12 object-cover rounded" onError={e => (e.currentTarget.style.display = 'none')} />
-                    <div className="flex-1 text-right">
-                      <p className="text-sm font-bold">{ad.title}</p>
-                      <p className="text-xs text-zinc-500">{positionNames[ad.position]}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button onClick={() => updateAd(ad.id, { active: !ad.active })} className={`p-1.5 rounded ${ad.active ? 'text-emerald-400' : 'text-zinc-600'}`}>
-                        {ad.active ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
-                      </button>
-                      <button onClick={() => handleEditAd(ad)} className="p-1.5 text-blue-400 hover:text-blue-300 rounded">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => { deleteAd(ad.id); toast.success('تم حذف الإعلان'); }} className="p-1.5 text-red-400 hover:text-red-300 rounded">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ==================== إدارة الصحفيين ==================== */}
-        {activeSection === 'journalists' && (
-          <div className="space-y-4">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-sm font-bold">الصحفيون ({journalists.length})</h3>
-              <button onClick={() => { setShowNewJournalist(!showNewJournalist); setEditingJournalist(null); setJName(''); setJTitle(''); setJBeat(''); }} className="px-3 py-1.5 text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-lg flex items-center gap-1">
-                <Plus className="w-3 h-3" /> صحفي جديد
-              </button>
-            </div>
-
-            {/* نموذج إضافة/تعديل صحفي */}
-            {showNewJournalist && (
-              <div className={`p-4 rounded-lg border ${darkMode ? 'bg-zinc-900 border-zinc-700' : 'bg-gray-50 border-gray-200'} space-y-3 mb-4`}>
-                <h4 className="text-sm font-bold">{editingJournalist ? 'تعديل الصحفي' : 'صحفي جديد'}</h4>
-                <input value={jName} onChange={e => setJName(e.target.value)} placeholder="الاسم الكامل *" className={`w-full border rounded-lg p-2 text-sm ${darkMode ? 'bg-black border-zinc-700 text-zinc-300' : 'bg-white border-gray-200'}`} />
-                <input value={jTitle} onChange={e => setJTitle(e.target.value)} placeholder="اللقب (مثال: مراسل سياسي)" className={`w-full border rounded-lg p-2 text-sm ${darkMode ? 'bg-black border-zinc-700 text-zinc-300' : 'bg-white border-gray-200'}`} />
-                <input value={jBeat} onChange={e => setJBeat(e.target.value)} placeholder="التخصص (مثال: السياسة)" className={`w-full border rounded-lg p-2 text-sm ${darkMode ? 'bg-black border-zinc-700 text-zinc-300' : 'bg-white border-gray-200'}`} />
-                <select value={jSection} onChange={e => setJSection(e.target.value)} className={`w-full border rounded-lg p-2 text-sm ${darkMode ? 'bg-black border-zinc-700 text-zinc-300' : 'bg-white border-gray-200'}`}>
-                  <option value="politics">السياسة</option>
-                  <option value="economics">الاقتصاد</option>
-                  <option value="sports">الرياضة</option>
-                  <option value="culture">الثقافة</option>
-                  <option value="society">المجتمع</option>
-                  <option value="science">العلوم والتقنية</option>
-                  <option value="diaspora">مغاربة العالم</option>
-                </select>
-                <div className="flex gap-2">
-                  <button onClick={handleSaveJournalist} className="px-4 py-2 text-xs bg-emerald-600 text-white rounded-lg hover:bg-emerald-700">
-                    <Save className="w-3 h-3 inline ml-1" />{editingJournalist ? 'تحديث' : 'إضافة'}
-                  </button>
-                  <button onClick={() => { setShowNewJournalist(false); setEditingJournalist(null); }} className="px-4 py-2 text-xs bg-zinc-700 text-zinc-300 rounded-lg">إلغاء</button>
-                </div>
-              </div>
-            )}
-
-            {/* قائمة الصحفيين */}
-            {journalists.length === 0 ? (
-              <p className="text-center text-zinc-500 py-8">لا يوجد صحفيون بعد</p>
-            ) : (
-              <div className="space-y-2">
-                {journalists.map(j => (
-                  <div key={j.id} className={`flex items-center gap-3 p-3 rounded-lg border ${darkMode ? 'border-zinc-800 bg-zinc-900/50' : 'border-gray-200 bg-gray-50'}`}>
-                    <div className="w-10 h-10 rounded-full bg-emerald-900/50 flex items-center justify-center text-emerald-400 font-bold text-lg flex-shrink-0">
-                      {j.name?.[0]}
-                    </div>
-                    <div className="flex-1 text-right">
-                      <p className="text-sm font-bold">{j.name}</p>
-                      <p className="text-xs text-zinc-500">{j.title} — {j.beat}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button onClick={() => handleEditJournalist(j)} className="p-1.5 text-blue-400 hover:text-blue-300 rounded">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => handleDeleteJournalist(j.id)} className="p-1.5 text-red-400 hover:text-red-300 rounded">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
       </div>
     </div>
   );

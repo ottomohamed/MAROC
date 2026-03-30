@@ -1,4 +1,6 @@
 ﻿import { useParams, Link } from "wouter";
+import { useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 import { useGetMAGHREB24Article } from "@/hooks/use-articles";
 import { Loader2, Calendar, User, ArrowRight, Share2 } from "lucide-react";
 import { AdBanner } from "@/components/ad-banner";
@@ -7,6 +9,19 @@ import { formatDate, getTranslatedSection } from "@/lib/utils";
 
 export default function ArticlePage() {
   const { slug } = useParams();
+
+  useEffect(() => {
+    if (slug) {
+      supabase.from("page_views").insert({ article_id: slug });
+    }
+  }, [slug]);
+
+  // تتبع المشاهدة
+  useEffect(() => {
+    if (slug) {
+      supabase.from("page_views").insert({ article_id: slug });
+    }
+  }, [slug]);
   const { data: article, isLoading, error } = useGetMAGHREB24Article(slug || "");
 
   if (isLoading) {
@@ -103,5 +118,7 @@ export default function ArticlePage() {
     </div>
   );
 }
+
+
 
 
