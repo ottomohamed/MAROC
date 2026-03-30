@@ -17,6 +17,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     { name: "رياضة", href: "/section/sports", icon: Newspaper },
     { name: "رأي", href: "/section/opinion", icon: Newspaper },
     { name: "مغاربة العالم", href: "/section/diaspora", icon: Users },
+    { name: "القبائل المغربية", href: "/section/tribes", icon: Users },
+    { name: "شؤون الفلاح", href: "/section/agriculture", icon: Newspaper },
     { name: "إرسال مقال", href: "/submit", icon: PenBox },
   ];
 
@@ -110,4 +112,5 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
+
 

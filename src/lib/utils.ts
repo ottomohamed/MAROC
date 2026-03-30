@@ -26,6 +26,8 @@ export function getTranslatedSection(section: string): string {
     'opinion': 'رأي',
     'editorial': 'افتتاحيات',
     'diaspora': 'مغاربة العالم',
+    'tribes': 'القبائل المغربية',
+    'agriculture': 'شؤون الفلاح',
     'politics': 'السياسة',
     'economics': 'الاقتصاد',
     'sports': 'الرياضة',
@@ -78,4 +80,5 @@ export function formatDateTime(dateString: string): string {
     minute: '2-digit'
   });
 }
+
 
