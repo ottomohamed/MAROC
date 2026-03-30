@@ -4,6 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { useGetMAGHREB24Article } from "@/hooks/use-articles";
 import { Loader2, Calendar, User, ArrowRight, Share2 } from "lucide-react";
 import { AdBanner } from "@/components/ad-banner";
+import { AdBanner } from "@/components/ad-banner";
 import { Comments } from "@/components/comments";
 import { formatDate, getTranslatedSection } from "@/lib/utils";
 
@@ -102,6 +103,8 @@ export default function ArticlePage() {
 
         {/* إعلان أسفل المقال */}
         <AdBanner position="footer" className="my-6" />
+        {/* إعلان بعد المقال */}
+        <AdBanner position="after_article" className="my-8" />
         {/* التعليقات */}
         <Comments articleId={article.id} />
 
@@ -118,6 +121,7 @@ export default function ArticlePage() {
     </div>
   );
 }
+
 
 
 

@@ -2,6 +2,7 @@
 import { ArticleCard } from "@/components/article-card";
 import { useListMAGHREB24Articles } from "@/hooks/use-articles";
 import { Loader2, PenBox, MessageSquare, Sparkles } from "lucide-react";
+import { AdBanner } from "@/components/ad-banner";
 import { getTranslatedSection } from "@/lib/utils";
 
 export default function SectionPage() {
@@ -94,3 +95,4 @@ export default function SectionPage() {
     </div>
   );
 }
+

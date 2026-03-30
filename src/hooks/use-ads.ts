@@ -3,7 +3,7 @@
 export interface Ad {
   id: string;
   title: string;
-  position: 'header_home' | 'sidebar' | 'footer' | 'in_article';
+  position: 'header_home' | 'sidebar' | 'footer' | 'in_article' | 'between_articles' | 'after_article' | 'section_bottom';
   imageUrl: string;
   linkUrl: string;
   active: boolean;
@@ -12,6 +12,9 @@ export interface Ad {
 const DEFAULT_ADS: Ad[] = [
   { id: '1', title: 'إعلان رئيسي الصفحة الأولى', position: 'header_home', imageUrl: 'https://placehold.co/970x100?text=Advertisement', linkUrl: '#', active: true },
   { id: '2', title: 'إعلان جانبي في المقالات', position: 'sidebar', imageUrl: 'https://placehold.co/300x600?text=Advertisement', linkUrl: '#', active: true },
+  { id: "3", title: "إعلان بين المقالات", position: "between_articles", imageUrl: "https://placehold.co/728x90?text=Advertisement", linkUrl: "#", active: false },
+  { id: "4", title: "إعلان نهاية المقال", position: "after_article", imageUrl: "https://placehold.co/728x90?text=Advertisement", linkUrl: "#", active: false },
+  { id: "5", title: "إعلان أسفل الأقسام", position: "section_bottom", imageUrl: "https://placehold.co/728x90?text=Advertisement", linkUrl: "#", active: false },
 ];
 
 export function useAds() {
@@ -65,3 +68,4 @@ export function useAds() {
 
   return { ads, updateAd, addAd, deleteAd };
 }
+

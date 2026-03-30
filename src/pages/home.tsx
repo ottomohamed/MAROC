@@ -91,8 +91,15 @@ export default function HomePage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {articles.map((article: any) => (
-              <ArticleCard key={article.id} article={article} />
+            {articles.map((article: any, index: number) => (
+              <>
+                <ArticleCard key={article.id} article={article} />
+                {(index + 1) % 3 === 0 && index !== articles.length - 1 && (
+                  <div className="col-span-full">
+                    <AdBanner position="between_articles" />
+                  </div>
+                )}
+              </>
             ))}
           </div>
         )}
@@ -130,3 +137,4 @@ export default function HomePage() {
     </div>
   );
 }
+
