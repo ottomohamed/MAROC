@@ -1,4 +1,4 @@
-User-agent: *
+﻿User-agent: *
 Allow: /
 
-Sitemap: https://maghrib24.ma/sitemap.xml
+Sitemap: https://www.maghrib24.com/sitemap.xml
