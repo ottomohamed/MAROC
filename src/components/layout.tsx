@@ -1,3 +1,5 @@
+﻿# إنشاء ملف layout.tsx جديد بالكامل
+@'
 import { Link, useLocation } from "wouter";
 import { useTheme } from "next-themes";
 import { Menu, X, Sun, Moon, Search, Radio } from "lucide-react";
@@ -73,7 +75,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
             {/* Actions */}
             <div className="flex items-center gap-2">
-              {/* مباشر */}
               <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-red-600 text-white text-[10px] font-black tracking-widest rounded-full">
                 <Radio className="w-3 h-3 animate-pulse" />
                 مباشر
@@ -182,9 +183,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <span className="font-black text-3xl text-red-500 tracking-tighter">24</span>
               </div>
               <p className="text-emerald-300/60 text-sm leading-relaxed max-w-sm">
-                صحيفة رقمية مغربية مستقلة، تعنى بنقل الخبر بكل موضوعية ومهنية، وتسلط الضوء على القضايا الجوهرية التي تهم المواطن المغربي.
+                صحيفة رقمية مغربية مستقلة، تعنى بنقل الخبر بكل موضوعية ومهنية، وتسليط الضوء على القضايا الجوهرية التي تهم المواطن المغربي.
               </p>
-              {/* النجمة المغربية */}
               <div className="mt-6">
                 <svg viewBox="0 0 200 200" className="w-16 h-16 opacity-30">
                   <polygon points="100,10 123,79 196,79 137,122 159,190 100,148 41,190 63,122 4,79 77,79" fill="none" stroke="#e60000" strokeWidth="8" />
@@ -210,20 +210,36 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div>
               <h4 className="text-[10px] font-black uppercase tracking-widest text-amber-400 mb-6">المؤسسة</h4>
               <ul className="space-y-3">
-                {[
-                  { name: "من نحن", href: "/" },
-                  { name: "فريق العمل", href: "/" },
-                  { name: "تواصل معنا", href: "/" },
-                  { name: "الإعلانات", href: "/" },
-                  { name: "سياسة الخصوصية", href: "/privacy" },
-                  { name: "أرسل مقالك", href: "/submit" },
-                ].map(item => (
-                  <li key={item.name}>
-                    <Link href={item.href} className="text-sm text-emerald-300/60 hover:text-white transition-colors">
-                      {item.name}
-                    </Link>
-                  </li>
-                ))}
+                <li>
+                  <Link href="/about" className="text-sm text-emerald-300/60 hover:text-white transition-colors">
+                    من نحن
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/team" className="text-sm text-emerald-300/60 hover:text-white transition-colors">
+                    فريق العمل
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/contact" className="text-sm text-emerald-300/60 hover:text-white transition-colors">
+                    تواصل معنا
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/advertise" className="text-sm text-emerald-300/60 hover:text-white transition-colors">
+                    الإعلانات
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/privacy" className="text-sm text-emerald-300/60 hover:text-white transition-colors">
+                    سياسة الخصوصية
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/submit" className="text-sm text-emerald-300/60 hover:text-white transition-colors">
+                    أرسل مقالك
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>
@@ -237,3 +253,4 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
+'@ | Out-File -FilePath src\components\layout.tsx -Encoding UTF8
