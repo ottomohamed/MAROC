@@ -60,7 +60,7 @@ export default function PrivacyPage() {
   );
 
   const lastUpdated = "1 أبريل 2025";
-  const contactEmail = "privacy@maghrib24.com";
+  const contactEmail = "maghrib24com@gmail.com";
   const siteUrl = "https://www.maghrib24.com";
 
   return (
@@ -233,7 +233,7 @@ export default function PrivacyPage() {
             <p className="text-emerald-200 text-sm mb-4">إذا كان لديك أي استفسار حول سياسة الخصوصية أو بياناتك الشخصية:</p>
             <div className="space-y-2 text-sm">
               <div className="flex items-center gap-3 justify-end text-emerald-100">
-                <span>privacy@maghrib24.com</span>
+                <span>maghrib24com@gmail.com</span>
                 <Mail className="w-4 h-4 text-emerald-400" />
               </div>
               <div className="flex items-center gap-3 justify-end text-emerald-100">

@@ -105,7 +105,7 @@ const CONTACTS = [
   {
     dept: "الخصوصية والبيانات",
     desc: "لطلبات حذف البيانات أو استفسارات الخصوصية",
-    email: "privacy@maghrib24.com",
+    email: "maghrib24com@gmail.com",
     phone: null,
     responseTime: "خلال 5 أيام عمل",
     color: "violet",
@@ -217,7 +217,7 @@ export default function ContactPage() {
                       <option value="submit@maghrib24.com">إرسال مقال</option>
                       <option value="pub@maghrib24.com">الإعلانات والشراكات</option>
                       <option value="corrections@maghrib24.com">شكوى / تصحيح</option>
-                      <option value="privacy@maghrib24.com">الخصوصية والبيانات</option>
+                      <option value="maghrib24com@gmail.com">الخصوصية والبيانات</option>
                     </select>
                   </div>
 
