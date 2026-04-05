@@ -537,6 +537,7 @@ function ArticleEditorModal({ article, onClose, onSave, darkMode }: any) {
                 <option value="diaspora">مغاربة العالم</option>
                 <option value="tribes">القبائل المغربية</option>
                 <option value="agriculture">شؤون الفلاح</option>
+                <option value="international">أخبار دولية</option>
               </select>
             </div>
 
@@ -1291,7 +1292,7 @@ function ArticlesPanel({ articles, darkMode, onRefresh, filterSection, setFilter
   const sections = ['all', 'politics', 'economics', 'sports', 'culture', 'society', 'science'];
   const sectionNames: Record<string, string> = {
     all: 'الكل', politics: 'السياسة', economics: 'الاقتصاد', sports: 'الرياضة',
-    culture: 'الثقافة', society: 'المجتمع', science: 'العلوم', diaspora: 'مغاربة العالم', tribes: 'القبائل المغربية', agriculture: 'شؤون الفلاح',
+    culture: 'الثقافة', society: 'المجتمع', science: 'العلوم', diaspora: 'مغاربة العالم', tribes: 'القبائل المغربية', agriculture: 'شؤون الفلاح', international: 'أخبار دولية',
   };
   
   const handleDelete = async (id: string) => {
@@ -1830,6 +1831,7 @@ function SettingsPanel({ darkMode }: { darkMode: boolean }) {
                   <option value="diaspora">مغاربة العالم</option>
                 <option value="tribes">القبائل المغربية</option>
                 <option value="agriculture">شؤون الفلاح</option>
+                <option value="international">أخبار دولية</option>
                 </select>
                 <div className="flex gap-2">
                   <button onClick={handleSaveJournalist} className="px-4 py-2 text-xs bg-emerald-600 text-white rounded-lg hover:bg-emerald-700">
@@ -1872,6 +1874,7 @@ function SettingsPanel({ darkMode }: { darkMode: boolean }) {
     </div>
   );
 }
+
 
 
 
