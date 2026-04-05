@@ -1,3 +1,5 @@
+# إنشاء ملف مؤقت بالمحتوى المعدل
+$newContent = @'
 import { useEffect } from "react";
 import { Link } from "wouter";
 import { ChevronLeft, Award, Users, Newspaper, Globe, Target, Eye, Mail, Twitter, Linkedin } from "lucide-react";
@@ -41,10 +43,10 @@ function useSeoMeta(title: string, description: string, canonical: string) {
       "alternateName": "Maghrib 24",
       "url": "https://www.maghrib24.com",
       "logo": "https://www.maghrib24.com/favicon.svg",
-      "description": "جريدة إلكترونية مغربية مستقلة متخصصة في تغطية الشأن المغربي والعربي والدولي",
+      "description": "جريدة إلكترونية مغربية مستقلة تهتم بالشأن المغربي والدفاع عن مقدسات البلاد ونشر الحقيقة",
       "foundingDate": "2020",
       "address": { "@type": "PostalAddress", "addressLocality": "الدار البيضاء", "addressCountry": "MA" },
-      "contactPoint": { "@type": "ContactPoint", "email": "contact@maghrib24.com", "contactType": "customer service", "availableLanguage": "Arabic" },
+      "contactPoint": { "@type": "ContactPoint", "email": "maghrib24com@gmail.com", "contactType": "customer service", "availableLanguage": "Arabic" },
       "sameAs": ["https://twitter.com/maghrib24", "https://www.facebook.com/maghrib24"]
     });
   }, [title, description, canonical]);
@@ -53,9 +55,9 @@ function useSeoMeta(title: string, description: string, canonical: string) {
 /* ─── DATA ────────────────────────────────────────────────────────────────── */
 const EDITOR_IN_CHIEF = {
   name: "محمد عبد الرحمان",
-  title: "رئيس التحرير",
+  title: "المدير العام ورئيس التحرير",
   bio: "صحفي مغربي بخبرة تمتد لأكثر من 15 عاماً في المجال الإعلامي. تخرّج من معهد الدراسات والبحوث في الإعلام بالرباط، وعمل في عدد من المؤسسات الإعلامية الكبرى قبل أن يؤسس مغرب 24 عام 2020. متخصص في الصحافة السياسية والاستقصائية، وفاز بجائزة الصحافة العربية المتميزة عام 2019.",
-  email: "redaction@maghrib24.com",
+  email: "maghrib24com@gmail.com",
   twitter: "@maghrib24redac",
   speciality: "الصحافة الاستقصائية والشأن السياسي المغربي",
 };
@@ -66,7 +68,7 @@ const TEAM = [
     title: "مراسلة الشؤون السياسية",
     beat: "السياسة",
     bio: "محللة سياسية حاصلة على ماجستير في العلوم السياسية من جامعة محمد الخامس بالرباط. تغطي أعمال البرلمان والحكومة والأحزاب السياسية.",
-    email: "a.mansouri@maghrib24.com",
+    email: "maghrib24com@gmail.com",
     color: "blue",
   },
   {
@@ -74,7 +76,7 @@ const TEAM = [
     title: "محرر الشؤون الاقتصادية",
     beat: "الاقتصاد",
     bio: "خبير اقتصادي وصحفي متخصص في تحليل الأسواق المالية والسياسات الاقتصادية. حاصل على شهادة في الاقتصاد التطبيقي من المدرسة الوطنية للتجارة والتسيير.",
-    email: "y.alami@maghrib24.com",
+    email: "maghrib24com@gmail.com",
     color: "emerald",
   },
   {
@@ -82,7 +84,7 @@ const TEAM = [
     title: "مراسلة الشؤون الرياضية",
     beat: "الرياضة",
     bio: "صحفية رياضية شغوفة بكرة القدم المغربية والإنجازات الدولية للرياضيين المغاربة. تغطي المسابقات الوطنية والدولية ميدانياً.",
-    email: "m.tahiri@maghrib24.com",
+    email: "maghrib24com@gmail.com",
     color: "amber",
   },
   {
@@ -90,7 +92,7 @@ const TEAM = [
     title: "محرر الشؤون الثقافية",
     beat: "الثقافة",
     bio: "ناقد ثقافي وأديب، عمل في عدة مجلات ثقافية مغربية. متخصص في الأدب والسينما والتراث الحضاري المغربي.",
-    email: "o.benjelloun@maghrib24.com",
+    email: "maghrib24com@gmail.com",
     color: "violet",
   },
   {
@@ -98,7 +100,7 @@ const TEAM = [
     title: "مراسلة الشؤون الاجتماعية",
     beat: "المجتمع",
     bio: "صحفية اجتماعية ذات خلفية في علم الاجتماع، تعمل على تسليط الضوء على قضايا الأسرة والمرأة والشباب والتعليم في المغرب.",
-    email: "f.benali@maghrib24.com",
+    email: "maghrib24com@gmail.com",
     color: "rose",
   },
   {
@@ -106,7 +108,7 @@ const TEAM = [
     title: "محرر العلوم والتكنولوجيا",
     beat: "العلوم والتقنية",
     bio: "مهندس معلوميات وصحفي علمي، يترجم التطورات التقنية والعلمية إلى محتوى مفهوم للقارئ العربي. متخصص في الذكاء الاصطناعي والبيئة.",
-    email: "k.tazi@maghrib24.com",
+    email: "maghrib24com@gmail.com",
     color: "cyan",
   },
   {
@@ -114,7 +116,7 @@ const TEAM = [
     title: "ناقد الفنون والإعلام",
     beat: "الفنون",
     bio: "ناقد فني ومدير برامج ثقافية، يتابع المشهد الفني المغربي بكل تفاصيله من موسيقى وسينما ومسرح وفنون تشكيلية.",
-    email: "h.alaoui@maghrib24.com",
+    email: "maghrib24com@gmail.com",
     color: "pink",
   },
 ];
@@ -142,7 +144,7 @@ const colorMap: Record<string, string> = {
 export default function AboutPage() {
   useSeoMeta(
     "من نحن | مغرب 24 — جريدة إلكترونية مغربية مستقلة",
-    "تعرّف على فريق مغرب 24: رئيس التحرير والمحررون المتخصصون في السياسة والاقتصاد والرياضة والثقافة والمجتمع. جريدة إلكترونية مغربية مستقلة منذ 2020.",
+    "مغرب 24 جريدة إلكترونية مغربية مستقلة تهتم بالشأن المغربي والدفاع عن مقدسات البلاد ونشر الحقيقة والمعلومة في إطار الاحترام والأمانة.",
     "https://www.maghrib24.com/about"
   );
 
@@ -156,6 +158,27 @@ export default function AboutPage() {
           <ChevronLeft className="w-3 h-3" />
           <span className="text-gray-600 dark:text-gray-300">من نحن</span>
         </nav>
+
+        {/* التعريف الرسمي للجريدة */}
+        <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-100 dark:border-zinc-800 p-6 md:p-8 mb-8 text-right">
+          <div className="inline-flex items-center gap-2 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/40 rounded-full px-4 py-1.5 mb-4">
+            <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest">تعريف الجريدة</span>
+            <Newspaper className="w-3.5 h-3.5 text-emerald-600" />
+          </div>
+          <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-base">
+            مغرب 24 جريدة إلكترونية مغربية مستقلة، تهتم بالشأن المغربي وتعمل على <strong className="text-emerald-700 dark:text-emerald-400">الدفاع عن مقدسات البلاد</strong> 
+            ونشر الحقيقة والمعلومة في إطار الاحترام والأمانة المهنية.
+          </p>
+          <p className="text-gray-600 dark:text-gray-400 leading-relaxed mt-4 text-base">
+            نرحب بمقالات القراء التي تحترم منهج البلاد السياسي ومبادئ الجريدة المنسجمة مع <strong className="text-emerald-700 dark:text-emerald-400">المبادئ العامة للمملكة</strong>، 
+            في جو من الاحترام والانضباط.
+          </p>
+          <div className="mt-5 p-4 bg-amber-50 dark:bg-amber-900/10 border-r-4 border-amber-500 dark:border-amber-600 rounded-xl">
+            <p className="text-sm text-amber-800 dark:text-amber-300">
+              <strong>⚠️ تنبيه مهم:</strong> لسنا مسؤولين عن التعليقات التي يتم رفعها من القراء، لكننا نرفض أي تعليق مسيء مهما كان العذر.
+            </p>
+          </div>
+        </div>
 
         {/* Hero */}
         <header className="text-right mb-16">
@@ -204,10 +227,10 @@ export default function AboutPage() {
           ))}
         </div>
 
-        {/* Editor in Chief */}
+        {/* Editor in Chief - المدير العام ورئيس التحرير */}
         <section className="mb-16" itemScope itemType="https://schema.org/Person">
           <div className="flex items-center gap-3 mb-8 justify-end">
-            <h2 className="text-2xl font-black text-gray-900 dark:text-white">رئيس التحرير</h2>
+            <h2 className="text-2xl font-black text-gray-900 dark:text-white">المدير العام ورئيس التحرير</h2>
             <div className="h-px flex-1 bg-gray-200 dark:bg-zinc-800" />
           </div>
 
@@ -329,3 +352,7 @@ export default function AboutPage() {
     </div>
   );
 }
+'@
+
+# حفظ المحتوى الجديد في الملف
+$newContent | Set-Content -Path src\pages\about.tsx -Encoding UTF8
