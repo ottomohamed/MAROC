@@ -13,7 +13,7 @@ const SectionPage = React.lazy(() => import("@/pages/section"));
 const AuthorPage = React.lazy(() => import("@/pages/author"));
 const SubmitPage = React.lazy(() => import("@/pages/submit"));
 const NewsroomPage = React.lazy(() => import("@/pages/newsroom"));
-const PrivacyPage = React.lazy(() => import("@/pages/privacy"));
+const PrivacyPage = React.lazy(() => import("@/pages/privacy"));const AdvertisePage = React.lazy(() => import("@/pages/advertise"));
 const AboutPage = React.lazy(() => import("@/pages/about"));
 const ContactPage = React.lazy(() => import("@/pages/contact"));
 const NotFound = React.lazy(() => import("@/pages/not-found"));
@@ -49,7 +49,7 @@ function App() {
               <Route path="/author/:slug" component={AuthorPage} />
               <Route path="/submit" component={SubmitPage} />
               <Route path="/newsroom" component={NewsroomPage} />
-              <Route path="/privacy" component={PrivacyPage} />
+              <Route path="/privacy" component={PrivacyPage} />              <Route path="/advertise" component={AdvertisePage} />
               <Route path="/about" component={AboutPage} />
               <Route path="/contact" component={ContactPage} />
               <Route component={NotFound} />
@@ -74,3 +74,5 @@ function App() {
 }
 
 export default App;
+
+
