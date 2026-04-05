@@ -14,6 +14,8 @@ const AuthorPage = React.lazy(() => import("@/pages/author"));
 const SubmitPage = React.lazy(() => import("@/pages/submit"));
 const NewsroomPage = React.lazy(() => import("@/pages/newsroom"));
 const PrivacyPage = React.lazy(() => import("@/pages/privacy"));
+const AboutPage = React.lazy(() => import("@/pages/about"));
+const ContactPage = React.lazy(() => import("@/pages/contact"));
 const NotFound = React.lazy(() => import("@/pages/not-found"));
 
 const queryClient = new QueryClient({
@@ -48,6 +50,8 @@ function App() {
               <Route path="/submit" component={SubmitPage} />
               <Route path="/newsroom" component={NewsroomPage} />
               <Route path="/privacy" component={PrivacyPage} />
+              <Route path="/about" component={AboutPage} />
+              <Route path="/contact" component={ContactPage} />
               <Route component={NotFound} />
             </Switch>
           </Suspense>
