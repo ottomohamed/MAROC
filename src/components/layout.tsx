@@ -249,7 +249,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <p className="text-emerald-800">صُنع بـ ❤️ في المغرب</p>
           </div>
         </div>
-      </footer>
+        <!-- updated: 2024 -->`n</footer>
     </div>
   );
 }
