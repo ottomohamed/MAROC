@@ -1,4 +1,8 @@
 ﻿import { supabase } from '@/lib/supabase'
+import { useEditor, EditorContent } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+import TiptapImage from '@tiptap/extension-image'
+import TiptapLink from '@tiptap/extension-link'
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { 
@@ -262,57 +266,99 @@ export const JOURNALISTS: Author[] = [
 
 // ==================== محرر النصوص المتقدم ====================
 function RichTextEditor({ content, onChange, darkMode, onImageUpload, imageUrl, onImageRemove }: { content: string; onChange: (content: string) => void; darkMode: boolean; onImageUpload?: (file: File) => void; imageUrl?: string; onImageRemove?: () => void }) {
-  const [isPreview, setIsPreview] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const [isPreview, setIsPreview] = useState(false);
 
-  const insertText = (before: string, after: string = "") => {
-    const ta = textareaRef.current;
-    if (!ta) return;
-    const start = ta.selectionStart;
-    const end = ta.selectionEnd;
-    const selected = content.substring(start, end);
-    const newContent = content.substring(0, start) + before + selected + after + content.substring(end);
-    onChange(newContent);
-    setTimeout(() => {
-      ta.focus();
-      ta.setSelectionRange(start + before.length, start + before.length + selected.length);
-    }, 0);
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      TiptapImage.configure({ inline: false, allowBase64: true }),
+      TiptapLink.configure({ openOnClick: false }),
+    ],
+    content: content || '<p>اكتب محتوى المقال هنا...</p>',
+    onUpdate: ({ editor }: any) => {
+      onChange(editor.getHTML());
+    },
+    editorProps: {
+      attributes: {
+        class: `min-h-[300px] p-4 focus:outline-none ${darkMode ? 'text-zinc-300' : 'text-gray-800'}`,
+        dir: 'rtl',
+      },
+    },
+  });
+
+  const addImage = () => {
+    const url = prompt('أدخل رابط الصورة:');
+    if (url && editor) editor.chain().focus().setImage({ src: url }).run();
   };
-  
+
+  const addLink = () => {
+    const url = prompt('أدخل الرابط:');
+    if (url && editor) editor.chain().focus().setLink({ href: url }).run();
+  };
+
+  const TB = ({ onClick, active = false, title, children }: any) => (
+    <button
+      type="button"
+      onClick={onClick}
+      title={title}
+      className={`p-1.5 rounded transition-colors ${active ? 'bg-emerald-500/20 text-emerald-400' : 'hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200'}`}
+    >
+      {children}
+    </button>
+  );
+
   return (
     <div className={`border rounded-lg overflow-hidden ${darkMode ? 'border-zinc-800' : 'border-gray-200'}`}>
-      <div className={`flex items-center gap-1 p-2 border-b ${darkMode ? 'border-zinc-800 bg-zinc-900/50' : 'border-gray-200 bg-gray-50'}`}>
-        <button type="button" onClick={() => insertText("**", "**")} className="p-1.5 hover:bg-zinc-800 rounded" title="غامق"><Bold className="w-4 h-4" /></button>
-        <button type="button" onClick={() => insertText("*", "*")} className="p-1.5 hover:bg-zinc-800 rounded" title="مائل"><Italic className="w-4 h-4" /></button>
-        <button type="button" onClick={() => insertText("\n- ")} className="p-1.5 hover:bg-zinc-800 rounded" title="قائمة"><List className="w-4 h-4" /></button>
-        <button type="button" onClick={() => insertText("\n> ")} className="p-1.5 hover:bg-zinc-800 rounded" title="اقتباس"><Quote className="w-4 h-4" /></button>
-        <button type="button" onClick={() => { const url = prompt("أدخل الرابط:"); if (url) insertText("[", "](" + url + ")"); }} className="p-1.5 hover:bg-zinc-800 rounded" title="رابط"><Link2 className="w-4 h-4" /></button>
-        <button type="button" onClick={() => imageInputRef.current?.click()} className="p-1.5 hover:bg-zinc-800 rounded" title="إضافة صورة"><ImageIcon2 className="w-4 h-4" /></button>
+      {/* شريط الأدوات */}
+      <div className={`flex flex-wrap items-center gap-1 p-2 border-b ${darkMode ? 'border-zinc-800 bg-zinc-900/50' : 'border-gray-200 bg-gray-50'}`}>
+        <TB onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()} active={editor?.isActive('heading', { level: 1 })} title="عنوان 1"><span className="text-xs font-bold">H1</span></TB>
+        <TB onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()} active={editor?.isActive('heading', { level: 2 })} title="عنوان 2"><span className="text-xs font-bold">H2</span></TB>
+        <TB onClick={() => editor?.chain().focus().toggleHeading({ level: 3 }).run()} active={editor?.isActive('heading', { level: 3 })} title="عنوان 3"><span className="text-xs font-bold">H3</span></TB>
+        <div className={`w-px h-5 mx-1 ${darkMode ? 'bg-zinc-700' : 'bg-gray-300'}`} />
+        <TB onClick={() => editor?.chain().focus().toggleBold().run()} active={editor?.isActive('bold')} title="خط عريض"><Bold className="w-4 h-4" /></TB>
+        <TB onClick={() => editor?.chain().focus().toggleItalic().run()} active={editor?.isActive('italic')} title="خط مائل"><Italic className="w-4 h-4" /></TB>
+        <div className={`w-px h-5 mx-1 ${darkMode ? 'bg-zinc-700' : 'bg-gray-300'}`} />
+        <TB onClick={() => editor?.chain().focus().toggleBulletList().run()} active={editor?.isActive('bulletList')} title="قائمة نقطية"><List className="w-4 h-4" /></TB>
+        <TB onClick={() => editor?.chain().focus().toggleOrderedList().run()} active={editor?.isActive('orderedList')} title="قائمة مرقمة"><span className="text-xs font-bold">1.</span></TB>
+        <TB onClick={() => editor?.chain().focus().toggleBlockquote().run()} active={editor?.isActive('blockquote')} title="اقتباس"><Quote className="w-4 h-4" /></TB>
+        <TB onClick={() => editor?.chain().focus().setHorizontalRule().run()} title="فاصل أفقي"><span className="text-xs">—</span></TB>
+        <div className={`w-px h-5 mx-1 ${darkMode ? 'bg-zinc-700' : 'bg-gray-300'}`} />
+        <TB onClick={addImage} title="إضافة صورة"><ImageIcon2 className="w-4 h-4" /></TB>
+        <TB onClick={() => imageInputRef.current?.click()} title="رفع صورة"><Upload className="w-4 h-4" /></TB>
+        <TB onClick={addLink} active={editor?.isActive('link')} title="إضافة رابط"><Link2 className="w-4 h-4" /></TB>
         <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f && onImageUpload) onImageUpload(f); }} />
-        {imageUrl && <img src={imageUrl} alt="" className="h-6 w-10 object-cover rounded" />}
         <div className="flex-1" />
-        <button 
-          onClick={() => setIsPreview(!isPreview)}
-          className={`p-1.5 rounded ${isPreview ? 'bg-emerald-500/20 text-emerald-400' : 'hover:bg-zinc-800'}`}
-          title="معاينة"
-        >
-          <EyeIcon className="w-4 h-4" />
-        </button>
+        <TB onClick={() => editor?.chain().focus().undo().run()} title="تراجع"><span className="text-xs">↩</span></TB>
+        <TB onClick={() => editor?.chain().focus().redo().run()} title="إعادة"><span className="text-xs">↪</span></TB>
+        <div className={`w-px h-5 mx-1 ${darkMode ? 'bg-zinc-700' : 'bg-gray-300'}`} />
+        <TB onClick={() => setIsPreview(!isPreview)} active={isPreview} title="معاينة"><EyeIcon className="w-4 h-4" /></TB>
       </div>
-      
+
+      {/* المحرر أو المعاينة */}
       {isPreview ? (
-        <div className={`p-4 min-h-[300px] ${darkMode ? 'bg-black text-zinc-300' : 'bg-white text-gray-800'}`}>
-          <div dangerouslySetInnerHTML={{ __html: content }} />
-        </div>
-      ) : (
-        <textarea
-          ref={textareaRef}
-          value={content}
-          onChange={(e: any) => onChange(e.target.value)}
-          className={`w-full p-4 min-h-[300px] ${darkMode ? 'bg-black text-zinc-300' : 'bg-white text-gray-800'} focus:outline-none resize-none`}
-          placeholder="اكتب محتوى المقال هنا..."
+        <div
+          className={`p-4 min-h-[300px] prose prose-lg max-w-none ${darkMode ? 'bg-black text-zinc-300 prose-invert' : 'bg-white text-gray-800'}`}
+          dir="rtl"
+          dangerouslySetInnerHTML={{ __html: editor?.getHTML() || '' }}
         />
+      ) : (
+        <div className={darkMode ? 'bg-black' : 'bg-white'}>
+          <style>{`
+            .ProseMirror h1 { font-size: 2em; font-weight: bold; margin: 0.5em 0; }
+            .ProseMirror h2 { font-size: 1.5em; font-weight: bold; margin: 0.5em 0; }
+            .ProseMirror h3 { font-size: 1.2em; font-weight: bold; margin: 0.5em 0; }
+            .ProseMirror ul { list-style-type: disc; padding-right: 1.5em; }
+            .ProseMirror ol { list-style-type: decimal; padding-right: 1.5em; }
+            .ProseMirror blockquote { border-right: 3px solid #10b981; padding-right: 1em; color: #6b7280; margin: 0.5em 0; }
+            .ProseMirror strong { font-weight: bold; }
+            .ProseMirror em { font-style: italic; }
+            .ProseMirror img { max-width: 100%; border-radius: 8px; margin: 0.5em 0; }
+            .ProseMirror hr { border-color: #374151; margin: 1em 0; }
+            .ProseMirror p.is-editor-empty:first-child::before { content: attr(data-placeholder); color: #6b7280; pointer-events: none; float: right; }
+          `}</style>
+          <EditorContent editor={editor} />
+        </div>
       )}
     </div>
   );

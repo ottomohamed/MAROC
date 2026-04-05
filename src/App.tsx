@@ -1,4 +1,4 @@
-﻿import React, { Suspense } from "react";
+import React, { Suspense } from "react";
 import { Route, Switch } from "wouter";
 import { ThemeProvider } from "next-themes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -17,6 +17,7 @@ const PrivacyPage = React.lazy(() => import("@/pages/privacy"));const AdvertiseP
 const AboutPage = React.lazy(() => import("@/pages/about"));
 const ContactPage = React.lazy(() => import("@/pages/contact"));
 const NotFound = React.lazy(() => import("@/pages/not-found"));
+const AdminPage = React.lazy(() => import("@/pages/admin"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -52,6 +53,7 @@ function App() {
               <Route path="/privacy" component={PrivacyPage} />              <Route path="/advertise" component={AdvertisePage} />
               <Route path="/about" component={AboutPage} />
               <Route path="/contact" component={ContactPage} />
+              <Route path="/admin" component={AdminPage} />
               <Route component={NotFound} />
             </Switch>
           </Suspense>
